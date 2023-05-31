@@ -1,0 +1,60 @@
+#!/bin/bash
+
+#packages taken from yuzu build docs, accepted default on all prompts
+sudo pacman -Syu --needed base-devel boost catch2 cmake ffmpeg fmt git glslang libzip lz4 mbedtls ninja nlohmann-json openssl opus qt5 sdl2 zlib zstd zip unzip
+
+#extra packages needed
+#patchelf for building the appimage, gtk3 and gst-plugins-bad to provide missing files during appimage creation
+sudo pacman -Syu patchelf gtk3 gst-plugins-bad
+
+#clone yuzu
+git clone --recursive https://github.com/yuzu-emu/yuzu-mainline
+cd yuzu-mainline
+mkdir build && cd build
+
+#build yuzu, -DCMAKE_INSTALL_PREFIX="/usr" added to keep paths consistent with docker.sh and upload.sh later on
+cmake .. -GNinja -DYUZU_USE_BUNDLED_VCPKG=ON -DYUZU_TESTS=OFF -DCMAKE_CXX_FLAGS="-march=native -I/usr/include/qt/QtWebEngineWidgets -flto=thin -O3" -DCMAKE_C_FLAGS="-march=native -I/usr/include/qt/QtWebEngineWidgets -flto=thin -O3" -DCMAKE_INSTALL_PREFIX="/usr"
+ninja
+
+#following steps taken and adapted from https://github.com/yuzu-emu/yuzu-mainline/blob/master/.ci/scripts/linux/docker.sh
+export DESTDIR="$PWD/AppDir" ninja install
+rm -vf AppDir/usr/bin/yuzu-cmd AppDir/usr/bin/yuzu-tester
+
+# Download tools needed to build an AppImage
+wget -nc https://raw.githubusercontent.com/yuzu-emu/ext-linux-bin/main/gcc/deploy-linux.sh
+wget -nc https://raw.githubusercontent.com/yuzu-emu/AppImageKit-checkrt/old/AppRun.sh
+wget -nc https://github.com/yuzu-emu/ext-linux-bin/raw/main/appimage/exec-x86_64.so
+# Set executable bit
+chmod 755 deploy-linux.sh AppRun.sh exec-x86_64.so
+
+# Workaround for https://github.com/AppImage/AppImageKit/issues/828
+export APPIMAGE_EXTRACT_AND_RUN=1
+
+mkdir -p AppDir/usr/optional
+mkdir -p AppDir/usr/optional/libstdc++
+mkdir -p AppDir/usr/optional/libgcc_s
+
+#NOTE SUDO ADDED HERE
+# Deploy yuzu's needed dependencies
+sudo DEPLOY_QT=1 ./deploy-linux.sh AppDir/usr/bin/yuzu AppDir
+
+#NOTE SUDO ADDED HERE
+# Workaround for libQt5MultimediaGstTools indirectly requiring libwayland-client and breaking Vulkan usage on end-user systems
+sudo find AppDir -type f -regex '.*libwayland-client\.so.*' -delete -print
+
+# Workaround for building yuzu with GCC 10 but also trying to distribute it to Ubuntu 18.04 et al.
+# See https://github.com/darealshinji/AppImageKit-checkrt
+cp exec-x86_64.so AppDir/usr/optional/exec.so
+cp AppRun.sh AppDir/AppRun
+cp --dereference /usr/lib/libstdc++.so.6 AppDir/usr/optional/libstdc++/libstdc++.so.6
+cp --dereference /lib/libgcc_s.so.1 AppDir/usr/optional/libgcc_s/libgcc_s.so.1
+
+#return to project root
+cd ..
+
+#make scripts called by upload.sh executable
+chmod a+x .ci/scripts/common/pre-upload.sh .ci/scripts/common/post-upload.sh
+#run upload.sh to create AppImage
+./.ci/scripts/linux/upload.sh
+
+exit 0
