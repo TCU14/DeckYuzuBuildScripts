@@ -1,11 +1,12 @@
-# DeckYuzuBuildScripts (STILL IN WRITING. NOT YET FUNCTIONAL AS INTENDED)
+# Deck Yuzu Build Scripts
 
 
 Scripts for building Yuzu Mainline AppImages on the Steam Deck. Credit to [@MarioROA](https://github.com/MarioROA) for adapting
-[yuzu's](https://github.com/yuzu-emu) scripts, without them the AppImages would not be useful outside of the container.
+[yuzu's](https://github.com/yuzu-emu) scripts, without them the AppImages would not be useful outside of the container. While this was made for the deck, it should technically be distro agnostic.
 
 ## Usage
 
+### Make sure you have at least 6gb of free space in the prefix location.
 Clone the repository and execute BuildContainer.sh in a terminal that is in the same directory.
 
 ### BuildContainer.sh
