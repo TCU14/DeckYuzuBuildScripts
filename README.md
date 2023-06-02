@@ -1,7 +1,7 @@
 # Deck Yuzu Build Scripts
 
 
-Scripts for building Yuzu Mainline AppImages on the Steam Deck. Credit to [@MarioROA](https://github.com/MarioROA) for adapting
+Scripts for building Yuzu Mainline AppImages on the Steam Deck. Credit to [@mariok93](https://github.com/marioK93) for adapting
 [yuzu's](https://github.com/yuzu-emu) scripts, without them the AppImages would not be useful outside of the container. While this was made for the deck, it should technically be distro agnostic.
 
 ## Usage
