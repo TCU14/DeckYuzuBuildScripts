@@ -2,4 +2,4 @@ export DISTROPOD=/home/deck/.local
 export COMPFLAGS="-march=native -O3 -flto -I/usr/include/qt/QtWebEngineWidgets"
 export DESIREDREPO='https://github.com/yuzu-emu/yuzu-mainline'
 export REPONAME='yuzu-mainline'
-export DECKRENOVATED='true'
+export DECKRENOVATED='false'
