@@ -21,6 +21,9 @@ exit 0
 source $HOME/.bashrc
 source ./renovationrc
 #setup distrobox if not already installed
+
+read -p
+wait
 if [ "$DECKRENOVATED" != 'true' ]; then
   curl -s https://raw.githubusercontent.com/89luca89/distrobox/main/install | sh -s -- --prefix $DISTROPOD
   curl -s https://raw.githubusercontent.com/89luca89/distrobox/main/extras/install-podman | sh -s -- --prefix $DISTROPOD
@@ -29,5 +32,5 @@ if [ "$DECKRENOVATED" != 'true' ]; then
   sed -n 's/false/true/gp' ./renovationrc
 else
   echo "distrobox and podman already installed, moving on..."
-  passTorch
 fi
+passTorch
