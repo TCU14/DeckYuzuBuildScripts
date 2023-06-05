@@ -15,6 +15,7 @@ distrobox stop ContainerEnv
 wait
 distrobox rm ContainerEnv
 podman image rm archlinux
+mv $REPONAME/build/yuzu--*.AppImage ./
 wait
 echo "All done."
 exit 0
