@@ -1,4 +1,7 @@
 #!/bin/bash
+LC='\033[1;36'
+NC='\033[0m'
+
 
 passTorch () {
 source $HOME/.bashrc
@@ -16,21 +19,28 @@ wait
 distrobox rm ContainerEnv
 wait
 echo "All done."
-exit 0
+
 }
 source $HOME/.bashrc
 source ./renovationrc
+while read -p 'DO YOU AGREE NOT TO ASK YUZU DEVELOPERS FOR SUPPORT WITH YOUR CUSTOM APPIMAGES? (y/N) ' confirm
+do
+  case "$confirm" in
+    n|N) continue;;
+    y|Y) break;;
+    *)   continue;;
+  esac
+done
 #setup distrobox if not already installed
-
-read -p
-wait
 if [ "$DECKRENOVATED" != 'true' ]; then
-  curl -s https://raw.githubusercontent.com/89luca89/distrobox/main/install | sh -s -- --prefix $DISTROPOD
-  curl -s https://raw.githubusercontent.com/89luca89/distrobox/main/extras/install-podman | sh -s -- --prefix $DISTROPOD
-  echo "export PATH=$DISTROPOD/bin:$DISTROPOD/podman/bin:$PATH" >> $HOME/.bashrc
-  wait
-  sed -n 's/false/true/gp' ./renovationrc
-else
-  echo "distrobox and podman already installed, moving on..."
+      curl -s https://raw.githubusercontent.com/89luca89/distrobox/main/install | sh -s -- --prefix $DISTROPOD
+      curl -s https://raw.githubusercontent.com/89luca89/distrobox/main/extras/install-podman | sh -s -- --prefix $DISTROPOD
+      echo "export PATH=$DISTROPOD/bin:$DISTROPOD/podman/bin:$PATH" >> $HOME/.bashrc
+      wait
+      sed -n 's/false/true/gp' ./renovationrc
+      else
+      echo "distrobox and podman already installed, moving on..."
 fi
-passTorch
+      passTorch
+      wait
+      exit 0
