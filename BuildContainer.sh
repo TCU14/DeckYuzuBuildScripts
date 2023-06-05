@@ -1,14 +1,11 @@
 #!/bin/bash
-LC='\033[1;36'
-NC='\033[0m'
-
 
 passTorch () {
 source $HOME/.bashrc
 chmod a+x ./BuildEnv.sh
 #create archlinux container in distrobox
 
-distrobox create -i archlinux --name ContainerEnv
+distrobox create -i docker.io/archlinux --name ContainerEnv
 wait
 distrobox enter ContainerEnv -- sh -c ./BuildEnv.sh
 wait
@@ -17,9 +14,10 @@ sleep 3
 distrobox stop ContainerEnv
 wait
 distrobox rm ContainerEnv
+podman image rm archlinux
 wait
 echo "All done."
-
+exit 0
 }
 source $HOME/.bashrc
 source ./renovationrc
@@ -42,5 +40,3 @@ if [ "$DECKRENOVATED" != 'true' ]; then
       echo "distrobox and podman already installed, moving on..."
 fi
       passTorch
-      wait
-      exit 0
