@@ -1,16 +1,8 @@
 #!/bin/bash
 
+CompileYuzu () {
+
 source ./renovationrc
-#packages taken from yuzu build docs, accepted default on all prompts
-sudo pacman -Syu --needed --noconfirm base-devel boost catch2 cmake ffmpeg fmt git glslang libzip lz4 mbedtls ninja nlohmann-json openssl opus qt5 sdl2 zlib zstd zip unzip
-wait
-#extra packages needed
-#patchelf for building the appimage, gtk3 and gst-plugins-bad to provide missing files during appimage creation
-sudo pacman -Syu --noconfirm patchelf gtk3 gst-plugins-bad
-wait
-#clone yuzu
-git clone --recursive $DESIREDREPO
-wait
 cd $REPONAME
 mkdir build && cd build
 
@@ -38,7 +30,7 @@ mkdir -p AppDir/usr/optional
 mkdir -p AppDir/usr/optional/libstdc++
 mkdir -p AppDir/usr/optional/libgcc_s
 
-echo "In a moment you will be prompted for your password. This section uses sudo"
+echo "In a moment you may be prompted for your password. This section uses sudo"
 sleep 2
 #NOTE SUDO ADDED HERE
 # Deploy yuzu's needed dependencies
@@ -63,4 +55,25 @@ cd ..
 chmod a+x .ci/scripts/common/pre-upload.sh .ci/scripts/common/post-upload.sh
 #run upload.sh to create AppImage
 ./.ci/scripts/linux/upload.sh
+return
+}
+
+source ./renovationrc
+#packages taken from yuzu build docs, accepted default on all prompts
+sudo pacman -Syu --needed --noconfirm base-devel boost catch2 cmake ffmpeg fmt git glslang libzip lz4 mbedtls ninja nlohmann-json openssl opus qt5 sdl2 zlib zstd zip unzip
+wait
+#extra packages needed
+#patchelf for building the appimage, gtk3 and gst-plugins-bad to provide missing files during appimage creation
+sudo pacman -Syu --noconfirm patchelf gtk3 gst-plugins-bad
+wait
+read -p "Do you want to use a local repository? (y/n) " lorepo
+if [ "$lorepo" == "n" -o "$lorepo" == "N" ]; then
+  git clone --recursive $DESIREDREPO
+else
+  echo "USING $REPONAME AS LOCAL REPOSITORY"
+fi
+wait
+CompileYuzu
+wait
 exit 0
+
