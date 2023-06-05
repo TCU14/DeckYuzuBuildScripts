@@ -6,7 +6,8 @@ Scripts for building Yuzu Mainline AppImages on the Steam Deck. Credit to [@mari
 
 ## Usage
 
-### Make sure you have at least 6gb of free space in the prefix location.
+### Make sure you have at least 6-8gb of free space in the prefix location.
+
 Clone the repository and execute BuildContainer.sh in a terminal that is in the same directory.
 
 ### BuildContainer.sh
@@ -15,7 +16,7 @@ Installs distrobox and podman at the desired prefix (Sources variable 'DISTROPOD
 
 ### BuildEnv
 
-Executed by BuildContainer. This sets up the build environment and then builds an AppImage from [yuzu-mainline.](https://github.com/yuzu-emu/yuzu-mainline) by default
+Executed by BuildContainer. This sets up the build environment and then builds an AppImage from [yuzu-mainline.](https://github.com/yuzu-emu/yuzu-mainline) By default
 BuildContainer is supposed to delete the container when this is done (prompting you)
 
 ### renovationrc
